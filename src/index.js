@@ -11,7 +11,7 @@ await fastify.register(websocket)
 
 fastify.post('/start', async (_req, res) => {
     const id = manager.createConnection()
-    res.send({ id })
+    res.send({ id, port: TCP_PORT })
 })
 
 fastify.get('/connect/:id', { websocket: true }, (conn, req) => {

@@ -9,7 +9,7 @@ const manager = new ConnectionManager()
 const fastify = Fastify({ logger: true })
 await fastify.register(websocket)
 
-fastify.get('/start', async (_req, res) => {
+fastify.post('/start', async (_req, res) => {
     const id = manager.createConnection()
     res.send({ id })
 })

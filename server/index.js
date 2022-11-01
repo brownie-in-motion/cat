@@ -1,5 +1,7 @@
+import path from 'path'
 import Fastify from 'fastify'
-import websocket from '@fastify/websocket'
+import fastifyWebsocket from '@fastify/websocket'
+import fastifyStatic from '@fastify/static'
 import ConnectionManager from './manager.js'
 
 const WEB_PORT = 3000
@@ -7,7 +9,11 @@ const TCP_PORT = 3001
 
 const manager = new ConnectionManager()
 const fastify = Fastify({ logger: true })
-await fastify.register(websocket)
+await fastify.register(fastifyWebsocket)
+await fastify.register(fastifyStatic, {
+    root: path.resolve('./client'),
+    prefix: '/',
+})
 
 fastify.post('/start', async (_req, res) => {
     const id = manager.createConnection()

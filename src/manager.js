@@ -3,7 +3,7 @@ import { EventEmitter } from 'events'
 import crypto from 'crypto'
 
 class Connection extends EventEmitter {
-    send = () => { throw new Error('not initialized') }
+    timestamp = Date.now()
 
     constructor() {
         super()
@@ -12,16 +12,23 @@ class Connection extends EventEmitter {
             this.resolve = resolve
         })
         this._initialized = false
+        this._send = () => { throw new Error('not initialized') }
     }
 
     ready() { return this._ready }
     initialized() { return this._initialized }
+    send(data) { this._send(data); this.keepAlive() }
 
-    // internal
+
+    // called by manager
     initialize(send) {
         this.resolve()
         this._initialized = true
-        this.send = send
+        this._send = send
+    }
+
+    keepAlive() {
+        this.timestamp = Date.now()
     }
 }
 
@@ -38,6 +45,7 @@ export default class ConnectionManager {
         const id = crypto.randomBytes(4).toString('hex')
         const connection = new Connection()
         this.connections.set(id, connection)
+        return id
     }
 
 
@@ -45,6 +53,15 @@ export default class ConnectionManager {
         if (!this._ready) throw new Error('not ready')
         if (!this.connections.has(id)) throw new Error('no such connection')
         return this.connections.get(id)
+    }
+
+    purge(timeout) {
+        const now = Date.now()
+        for (const [id, connection] of this.connections) {
+            if (now - connection.timestamp > timeout) {
+                this.connections.delete(id)
+            }
+        }
     }
 
     start(port) {
@@ -94,7 +111,9 @@ export default class ConnectionManager {
                     }
 
                     // otherwise, give data to connection
-                    this.connections.get(state.id).emit('data', data)
+                    const pipe = this.connections.get(state.id)
+                    pipe.emit('data', data)
+                    pipe.keepAlive()
                 }
             })
         })

@@ -1,6 +1,7 @@
 {
   "dependencies": {
-    "fastify": "^4.9.2",
-    "ws": "^8.10.0"
-  }
+    "@fastify/websocket": "^7.1.0",
+    "fastify": "^4.9.2"
+  },
+  "type": "module"
 }

@@ -2,7 +2,15 @@
   "dependencies": {
     "@fastify/static": "^6.5.0",
     "@fastify/websocket": "^7.1.0",
-    "fastify": "^4.9.2"
+    "esbuild": "^0.15.13",
+    "fastify": "^4.9.2",
+    "xterm": "^5.0.0"
+  },
+  "scripts": {
+    "build-script": "esbuild client/* --bundle --outdir=dist",
+    "build-public": "cp -r public/* dist/",
+    "build": "npm run build-script && npm run build-public",
+    "start": "node server"
   },
   "type": "module"
 }

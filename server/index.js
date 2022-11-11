@@ -11,7 +11,7 @@ const manager = new ConnectionManager()
 const fastify = Fastify({ logger: true })
 await fastify.register(fastifyWebsocket)
 await fastify.register(fastifyStatic, {
-    root: path.resolve('./client'),
+    root: path.resolve('./dist'),
     prefix: '/',
 })
 

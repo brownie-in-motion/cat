@@ -1,16 +1,25 @@
 {
+  "name": "raas",
+  "version": "0.0.0",
+  "private": true,
   "dependencies": {
     "@fastify/static": "^6.5.0",
-    "@fastify/websocket": "^7.1.0",
+    "@fastify/websocket": "^7.1.1",
+    "dotenv": "^16.0.3",
+    "fastify": "^4.9.2"
+  },
+  "devDependencies": {
+    "concurrently": "^7.5.0",
     "esbuild": "^0.15.13",
-    "fastify": "^4.9.2",
-    "xterm": "^5.0.0"
+    "nodemon": "^2.0.20",
+    "xterm": "^5.0.0",
+    "xterm-addon-fit": "^0.6.0"
   },
   "scripts": {
-    "build-script": "esbuild client/* --bundle --outdir=dist",
-    "build-public": "cp -r public/* dist/",
-    "build": "npm run build-script && npm run build-public",
-    "start": "node server"
+    "build": "esbuild client/app.js --bundle --outdir=dist --minify",
+    "start-server": "nodemon -w server server",
+    "start-client": "esbuild client/app.js --bundle --outdir=dist --watch --sourcemap",
+    "start": "concurrently npm:start-*"
   },
   "type": "module"
 }

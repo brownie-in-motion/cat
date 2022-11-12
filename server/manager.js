@@ -19,7 +19,6 @@ class Connection extends EventEmitter {
     initialized() { return this._initialized }
     send(data) { this._send(data); this.keepAlive() }
 
-
     // called by manager
     initialize(send) {
         this.resolve()
@@ -42,7 +41,10 @@ export default class ConnectionManager {
 
     createConnection() {
         if (!this._ready) throw new Error('not ready')
-        const id = crypto.randomBytes(4).toString('hex')
+        let id
+        do {
+            id = crypto.randomBytes(6).toString('base64url')
+        } while (id.startsWith('-'))
         const connection = new Connection()
         this.connections.set(id, connection)
         return id
@@ -51,7 +53,6 @@ export default class ConnectionManager {
 
     getConnection(id) {
         if (!this._ready) throw new Error('not ready')
-        if (!this.connections.has(id)) throw new Error('no such connection')
         return this.connections.get(id)
     }
 

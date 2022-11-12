@@ -1,0 +1,47 @@
+html, body {
+  margin: 0;
+  height: 100%;
+}
+
+.control {
+  border-radius: 1rem;
+  padding: 1rem;
+  background: #000;
+  display: grid;
+  grid-template-columns: max-content 1fr min-content;
+}
+
+.container {
+  height: 100%;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-rows: min-content 1fr;
+  background: #fff;
+  color: #000;
+  padding: 1.5rem;
+  gap: 1rem;
+}
+
+.command {
+  color: #fff;
+  cursor: pointer;
+  user-select: all;
+  font-family: monospace;
+  font-size: 1rem;
+  align-self: center;
+}
+
+.tty {
+  cursor: pointer;
+  background: #fff;
+  color: #000;
+  border: 0;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+}
+
+.term {
+  border-radius: 1rem;
+  padding: 1.5rem;
+  background: #000;
+}

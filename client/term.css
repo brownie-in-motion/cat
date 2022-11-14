@@ -1,0 +1,16 @@
+.container {
+  height: 100%;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-rows: min-content 1fr;
+  background: #fff;
+  color: #000;
+  padding: 1.5rem;
+  gap: 1rem;
+}
+
+.term {
+  border-radius: 1rem;
+  padding: 1.5rem;
+  background: #000;
+}

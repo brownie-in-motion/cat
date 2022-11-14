@@ -5,9 +5,11 @@ import crypto from 'crypto'
 class Connection extends EventEmitter {
     timestamp = Date.now()
 
-    constructor() {
+    constructor(id, token) {
         super()
 
+        this._token = token
+        this._id = id
         this._ready = new Promise((resolve) => {
             this.resolve = resolve
         })
@@ -17,6 +19,8 @@ class Connection extends EventEmitter {
 
     ready() { return this._ready }
     initialized() { return this._initialized }
+    id() { return this._id }
+    checkToken(token) { return this._token === token }
     send(data) { this._send(data); this.keepAlive() }
 
     // called by manager
@@ -41,19 +45,28 @@ export default class ConnectionManager {
 
     createConnection() {
         if (!this._ready) throw new Error('not ready')
+        let idBuf
         let id
         do {
-            id = crypto.randomBytes(6).toString('base64url')
+            idBuf = crypto.randomBytes(6)
+            id = idBuf.toString('base64url')
         } while (id.startsWith('-'))
-        const connection = new Connection()
+        const token = Buffer
+            .concat([idBuf, crypto.randomBytes(6)])
+            .toString('base64url')
+        const connection = new Connection(id, token)
         this.connections.set(id, connection)
-        return id
+        return token
     }
 
 
-    getConnection(id) {
+    getConnection(token) {
         if (!this._ready) throw new Error('not ready')
-        return this.connections.get(id)
+        const tokenBuf = Buffer.from(token ?? '', 'base64url')
+        const id = tokenBuf.subarray(0, 6).toString('base64url')
+        const conn = this.connections.get(id)
+        if (!conn?.checkToken(token)) return
+        return conn
     }
 
     purge(timeout) {

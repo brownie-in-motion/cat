@@ -1,5 +1,4 @@
 import path from 'path'
-import crypto from 'crypto'
 import Fastify from 'fastify'
 import fastifyWebsocket from '@fastify/websocket'
 import fastifyStatic from '@fastify/static'

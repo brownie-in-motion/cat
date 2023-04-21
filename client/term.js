@@ -16,8 +16,8 @@ const Term = ({ token }) => {
   const [init, sendMessage] = useSession(token, handleMessage)
   const handleTty = useCallback(() => {
     sendMessage(
-      'SHELL=$0 script -q /dev/null -c ' +
-      `'stty rows ${term.current.rows} cols ${term.current.cols};exec $0'\n`
+      'script -q /dev/null -c ' +
+      `"stty rows ${term.current.rows} cols ${term.current.cols};exec /bin/bash"\n`
     )
   }, [sendMessage])
   useEffect(() => {

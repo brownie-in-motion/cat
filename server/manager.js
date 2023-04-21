@@ -15,11 +15,13 @@ class Connection extends EventEmitter {
         })
         this._initialized = false
         this._send = () => { throw new Error('not initialized') }
+        this._chunks = []
     }
 
     ready() { return this._ready }
     initialized() { return this._initialized }
     id() { return this._id }
+    chunks() { return this._chunks }
     checkToken(token) { return this._token === token }
     send(data) { this._send(data); this.keepAlive() }
 
@@ -32,6 +34,11 @@ class Connection extends EventEmitter {
 
     keepAlive() {
         this.timestamp = Date.now()
+    }
+
+    write(chunk) {
+        this.emit('data', chunk)
+        this._chunks.push(chunk)
     }
 }
 
@@ -115,7 +122,7 @@ export default class ConnectionManager {
 
                         // give remaining data to emitter
                         const remaining = data.subarray(prefix.length)
-                        if (remaining.length) pipe.emit('data', remaining)
+                        if (remaining.length) pipe.write(remaining)
                     }
                 } else {
                     // if the connection is gone, then discard
@@ -126,8 +133,8 @@ export default class ConnectionManager {
 
                     // otherwise, give data to connection
                     const pipe = this.connections.get(state.id)
-                    pipe.emit('data', data)
                     pipe.keepAlive()
+                    pipe.write(data)
                 }
             })
         })

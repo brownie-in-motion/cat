@@ -32,10 +32,13 @@ fastify.get('/connect/:token', { websocket: true }, (conn, req) => {
         await pipe.ready()
         pipe.send(data)
     })
-
     pipe.on('data', (data) => {
         conn.socket.send(data)
     })
+    const chunks = pipe.chunks()
+    if (chunks.length > 0) {
+        conn.socket.send(Buffer.concat(chunks))
+    }
 })
 
 try {

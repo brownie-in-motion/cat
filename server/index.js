@@ -11,12 +11,16 @@ const manager = new ConnectionManager()
 const fastify = Fastify({ logger: true })
 await fastify.register(fastifyWebsocket)
 await fastify.register(fastifyStatic, {
-    root: path.resolve('./dist'),
+    root: path.resolve('public'),
+})
+await fastify.register(fastifyStatic, {
+    root: path.resolve('dist'),
     prefix: '/assets',
+    decorateReply: false,
 })
 
-fastify.get('/:token', (_req, reply) => {
-    reply.sendFile('index.html', path.resolve('./public'))
+fastify.setNotFoundHandler((_req, reply) => {
+    reply.sendFile('index.html')
 })
 
 fastify.get('/connect/:token', { websocket: true }, (conn, req) => {
